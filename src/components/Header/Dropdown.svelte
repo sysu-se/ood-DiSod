@@ -1,37 +1,51 @@
 <script>
-	import game from '@sudoku/game';
-	import { validateSencode } from '@sudoku/sencode';
+	import { getContext } from 'svelte';
+	import { decodeSencode, validateSencode } from '@sudoku/sencode';
 	import { modal } from '@sudoku/stores/modal';
 	import { slide, fade } from 'svelte/transition';
 	import { DIFFICULTIES, DROPDOWN_DURATION, DIFFICULTY_CUSTOM } from '@sudoku/constants';
 	import { difficulty } from '@sudoku/stores/difficulty';
 
+	const gameStore = getContext('gameStore');
+
+	const defaultPuzzle = [
+		[5, 3, 0, 0, 7, 0, 0, 0, 0],
+		[6, 0, 0, 1, 9, 5, 0, 0, 0],
+		[0, 9, 8, 0, 0, 0, 0, 6, 0],
+		[8, 0, 0, 0, 6, 0, 0, 0, 3],
+		[4, 0, 0, 8, 0, 3, 0, 0, 1],
+		[7, 0, 0, 0, 2, 0, 0, 0, 6],
+		[0, 6, 0, 0, 0, 0, 2, 8, 0],
+		[0, 0, 0, 4, 1, 9, 0, 0, 5],
+		[0, 0, 0, 0, 8, 0, 0, 7, 9],
+	];
+
 	let dropdownVisible = false;
 
 	function handleDifficulty(difficultyValue) {
 		dropdownVisible = false;
-		game.pause();
+		gameStore.pause();
 
 		modal.show('confirm', {
 			title: 'New Game',
 			text: 'Start new game with difficulty "' + DIFFICULTIES[difficultyValue] + '"?',
 			button: 'Continue',
-			onHide: game.resume,
+			onHide: () => gameStore.resume(),
 			callback: () => {
-				game.startNew(difficultyValue);
+				gameStore.startNew(defaultPuzzle);
 			},
 		});
 	}
 
 	function handleCreateOwn() {
 		dropdownVisible = false;
-		game.pause();
+		gameStore.pause();
 
 		modal.show('confirm', {
 			title: 'Create Own',
 			text: 'Switch to the creator mode to create your own Sudoku puzzle?',
 			button: 'Continue',
-			onHide: game.resume,
+			onHide: () => gameStore.resume(),
 			callback: () => {
 				//game.startCreatorMode();
 			},
@@ -40,16 +54,16 @@
 
 	function handleEnterCode() {
 		dropdownVisible = false;
-		game.pause();
+		gameStore.pause();
 
 		modal.show('prompt', {
 			title: 'Enter Code',
 			text: 'Please enter the code of the Sudoku puzzle you want to play:',
 			fontMono: true,
 			button: 'Start',
-			onHide: game.resume,
+			onHide: () => gameStore.resume(),
 			callback: (value) => {
-				game.startCustom(value);
+				gameStore.startNew(decodeSencode(value));
 			},
 			validate: validateSencode
 		});
@@ -57,12 +71,12 @@
 
 	function showDropdown() {
 		dropdownVisible = true;
-		game.pause();
+		gameStore.pause();
 	}
 
 	function hideDropdown() {
 		dropdownVisible = false;
-		setTimeout(game.resume, DROPDOWN_DURATION);
+		setTimeout(() => gameStore.resume(), DROPDOWN_DURATION);
 	}
 </script>
 

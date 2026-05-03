@@ -1,5 +1,7 @@
 <script>
-	import { CANDIDATE_COORDS } from '@sudoku/constants';
+	import { getCandidateCoords } from '../../domain/index.js';
+
+	const CANDIDATE_COORDS = getCandidateCoords();
 
 	export let candidates = [];
 </script>
@@ -22,4 +24,4 @@
 	.candidate {
 		@apply h-full w-full row-end-auto col-end-auto leading-full;
 	}
-</style>
+</style> 

@@ -4,7 +4,7 @@
 	import { MODAL_NONE, MODAL_DURATION } from '@sudoku/constants';
 	import types from './Types';
 
-	const MODALS_DISABLED_OVERLAY = ['welcome', 'gameover'];
+	const MODALS_DISABLED_OVERLAY = ['welcome', 'gameover', 'explorefailure'];
 
 	function handleOverlayClick() {
 		if (!MODALS_DISABLED_OVERLAY.includes($modal)) {

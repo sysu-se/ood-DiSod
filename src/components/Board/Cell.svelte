@@ -1,8 +1,10 @@
 <script>
+	import { getContext } from 'svelte';
 	import Candidates from './Candidates.svelte';
 	import { fade } from 'svelte/transition';
 	import { SUDOKU_SIZE } from '@sudoku/constants';
-	import { cursor } from '@sudoku/stores/cursor';
+
+	const gameStore = getContext('gameStore');
 
 	export let value;
 	export let cellX;
@@ -36,7 +38,7 @@
 		     class:same-number={sameNumber}
 		     class:conflicting-number={conflictingNumber}>
 
-			<button class="cell-btn" on:click={cursor.set(cellX - 1, cellY - 1)}>
+			<button class="cell-btn" on:click={() => gameStore.selectCell(cellX - 1, cellY - 1)}>
 				{#if candidates}
 					<Candidates {candidates} />
 				{:else}

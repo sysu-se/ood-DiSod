@@ -1,23 +1,46 @@
 <script>
+	import { getContext } from 'svelte';
 	import { difficulty as difficultyStore } from '@sudoku/stores/difficulty';
-	import { startNew, startCustom } from '@sudoku/game';
-	import { validateSencode } from '@sudoku/sencode';
+	import { decodeSencode, validateSencode } from '@sudoku/sencode';
 	import { DIFFICULTIES } from '@sudoku/constants';
 
 	export let data = {};
 	export let hideModal;
 
+	const gameStore = getContext('gameStore');
+
 	let difficulty = $difficultyStore;
 	let sencode = data.sencode || '';
+
+	const defaultPuzzle = [
+		// [5, 3, 0, 0, 7, 0, 0, 0, 0],
+		// [6, 0, 0, 1, 9, 5, 0, 0, 0],
+		// [0, 9, 8, 0, 0, 0, 0, 6, 0],
+		// [8, 0, 0, 0, 6, 0, 0, 0, 3],
+		// [4, 0, 0, 8, 0, 3, 0, 0, 1],
+		// [7, 0, 0, 0, 2, 0, 0, 0, 6],
+		// [0, 6, 0, 0, 0, 0, 2, 8, 0],
+		// [0, 0, 0, 4, 1, 9, 0, 0, 5],
+		// [0, 0, 0, 0, 8, 0, 0, 7, 9],
+		[6, 7, 5, 4, 2, 1, 3, 8, 9],
+		[2, 3, 1, 9, 0, 0, 0, 5, 7],
+		[4, 8, 9, 0, 0, 0, 1, 2, 6],
+		[5, 1, 2, 0, 9, 0, 7, 4, 8],
+		[8, 6, 3, 2, 4, 7, 9, 1, 5],
+		[9, 4, 7, 0, 1, 0, 6, 3, 2],
+		[3, 2, 4, 0, 0, 9, 8, 7, 1],
+		[1, 5, 6, 0, 0, 4, 2, 9, 3],
+		[7, 9, 8, 1, 3, 2, 5, 6, 4]
+	];
 
 	$: enteredSencode = sencode.trim().length !== 0;
 	$: buttonDisabled = enteredSencode ? !validateSencode(sencode) : !DIFFICULTIES.hasOwnProperty(difficulty);
 
 	function handleStart() {
 		if (validateSencode(sencode)) {
-			startCustom(sencode);
+			gameStore.reset(decodeSencode(sencode));
 		} else {
-			startNew(difficulty);
+			gameStore.reset(defaultPuzzle);
 		}
 
 		hideModal();
